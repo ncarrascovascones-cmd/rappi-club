@@ -1,0 +1,38 @@
+{
+  "name": "rappi-club",
+  "version": "0.1.0",
+  "description": "Prototipo conceptual de Rappi Club: programa de fidelización para rappitenderos.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ncarrascovascones-cmd/rappi-club.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ncarrascovascones-cmd/rappi-club/issues"
+  },
+  "homepage": "https://github.com/ncarrascovascones-cmd/rappi-club#readme",
+  "dependencies": {
+    "@fontsource/manrope": "^5.3.0",
+    "@fontsource/nunito": "^5.3.0",
+    "lucide-react": "^1.48.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21"
+  },
+  "private": true,
+  "type": "module"
+}
