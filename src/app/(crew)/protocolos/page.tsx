@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { BadgeCheck, Bookmark, Layers, Search, ShieldCheck, Users, BookOpen } from 'lucide-react';
+import { BadgeCheck, Bookmark, ChevronDown, Search, ShieldCheck } from 'lucide-react';
 import { useCrew, useSelectors } from '@/lib/store';
 import { HELP_CATEGORIES } from '@/lib/labels';
 import type { HelpCategory } from '@/lib/types';
@@ -10,6 +10,7 @@ import { Chip, Input } from '@/components/ui/field';
 import { EmptyState } from '@/components/ui/states';
 import { Button } from '@/components/ui/button';
 import { ProtocolCard } from '@/components/protocol-card';
+import { CrewFlow } from '@/components/crew-flow';
 
 export default function ProtocolosPage() {
   const { state } = useCrew();
@@ -41,27 +42,23 @@ export default function ProtocolosPage() {
         description="Cada Protocolo Crew se construye con experiencias reales de Rappitenderos y solo se publica cuando Rappi lo valida."
       />
 
-      <section className="mb-6 grid animate-fade-up gap-3 rounded-3xl bg-ink-gradient p-5 text-white sm:grid-cols-4 sm:p-6">
-        {[
-          { icon: Users, t: 'Experiencias', d: 'La flota comparte lo que vive' },
-          { icon: Layers, t: 'Patrón', d: 'Rappi agrupa casos similares' },
-          { icon: BookOpen, t: 'Protocolo', d: 'Se propone una solución' },
-          { icon: ShieldCheck, t: 'Validado', d: 'Rappi aprueba y publica' },
-        ].map((s, i) => (
-          <div key={s.t} className="flex items-center gap-3 sm:flex-col sm:items-start">
-            <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${i === 3 ? 'bg-mint-500' : 'bg-white/10'}`}>
-              <s.icon className="h-5 w-5" />
+      <details className="group mb-6 animate-fade-up rounded-3xl bg-ink-gradient text-white shadow-lift" open>
+        <summary className="flex cursor-pointer list-none items-center gap-3 p-5 sm:px-6 [&::-webkit-details-marker]:hidden">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-mint-500">
+            <ShieldCheck className="h-5 w-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-extrabold">¿Cómo nace un Protocolo Crew?</span>
+            <span className="block text-xs text-white/60">
+              La Crew aporta experiencias. Rappi identifica el patrón, propone la solución y la valida.
             </span>
-            <div>
-              <p className="text-sm font-extrabold">
-                <span className="mr-1 text-white/40">{i + 1}.</span>
-                {s.t}
-              </p>
-              <p className="text-xs text-white/60">{s.d}</p>
-            </div>
-          </div>
-        ))}
-      </section>
+          </span>
+          <ChevronDown className="h-5 w-5 shrink-0 text-white/60 transition group-open:rotate-180" />
+        </summary>
+        <div className="px-4 pb-5 sm:px-6">
+          <CrewFlow dark />
+        </div>
+      </details>
 
       <div className="mb-5 space-y-3">
         <div className="relative">

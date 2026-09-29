@@ -109,8 +109,8 @@ export const CLUSTER_STATUS: Record<
 };
 
 export const COPILOT_STATUS: Record<CopilotStatus, { label: string; tone: 'mint' | 'sun' | 'ink' }> = {
-  activo: { label: 'Participando', tone: 'mint' },
-  pausa: { label: 'En pausa', tone: 'sun' },
+  activo: { label: 'Activo', tone: 'mint' },
+  pausa: { label: 'Pausado', tone: 'sun' },
   retirado: { label: 'No participa', tone: 'ink' },
 };
 
@@ -131,3 +131,6 @@ export const ZONES = [
   'Kennedy',
   'Centro',
 ];
+
+export const VOLUNTARY_RULE = 'Ser Copiloto es voluntario.';
+export const VOLUNTARY_RULE_DETAIL = 'Puedes aceptar, pausar o dejar de participar sin penalización.';

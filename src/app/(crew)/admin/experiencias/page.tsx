@@ -33,7 +33,10 @@ function ExperiencesView() {
   const router = useRouter();
   const params = useSearchParams();
   const tab = params.get('tab') === 'casos' ? 'casos' : 'experiencias';
-  const [cat, setCat] = useState<HelpCategory | 'todas'>('todas');
+  const initialCat = params.get('c') as HelpCategory | null;
+  const [cat, setCat] = useState<HelpCategory | 'todas'>(
+    initialCat && HELP_CATEGORIES.some((c) => c.id === initialCat) ? initialCat : 'todas',
+  );
   const [status, setStatus] = useState<Experience['status'] | 'todas'>('todas');
   const [q, setQ] = useState('');
   const [selected, setSelected] = useState<string[]>([]);

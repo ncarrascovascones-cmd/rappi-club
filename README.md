@@ -1,6 +1,8 @@
 # RAPPI CREW · “La escuela de la calle”
 
-> **Tu experiencia guía a los nuevos.** · Campaña: **Pasa la Posta**
+> **Tu experiencia guía a los nuevos.** · Campaña: **PASA LA POSTA**
+>
+> *No aprendas a golpes. Aprende de los que ya pasaron por ahí.*
 
 Prototipo funcional de alta fidelidad de una propuesta de fidelización de Rappitenderos.
 Un **Copiloto voluntario** acompaña a quienes empiezan y las experiencias de la flota se convierten en
@@ -41,7 +43,37 @@ Otros comandos:
 | `npm run lint` | ESLint |
 | `npm run db:seed` | Carga los datos demo en Supabase (ver abajo) |
 
-## Cómo usar la demo
+## Demo para el jurado (Modo presentación)
+
+1. `npm run build && npm start` (o `npm run dev`) y abre `http://localhost:3000`.
+2. Pulsa **Modo presentación** en la pantalla de entrada (también está en la barra lateral y en el menú mobile),
+   o entra directo a `/presentacion`.
+3. La portada explica en 1 minuto el problema, qué es Rappi Crew, el flujo central y la validación de Rappi.
+   Pulsa **Iniciar recorrido guiado**: la demo vuelve a sus datos de ejemplo para que el caso salga siempre igual.
+4. Una barra flotante guía 10 pasos. Avanza con **Siguiente** o con las flechas **← →** del teclado. Cada paso
+   muestra el guion (qué decir) y, cuando aplica, un botón de acción:
+
+| # | Paso | Pantalla | Acción |
+| --- | --- | --- | --- |
+| 1 | Nuevo Rappitendero | `/inicio` | — |
+| 2 | Copiloto | `/mi-copiloto` | — |
+| 3 | Problema | Chat con el Copiloto | *Enviar mensaje de Valentina* |
+| 4 | Necesito una mano | Formulario precargado | Pulsa **Enviar** en el formulario |
+| 5 | Administrador | `/admin` (flujo central con números en vivo) | — |
+| 6 | Análisis de experiencias | `/admin/experiencias` | *Agrupar 3 experiencias en un patrón* |
+| 7 | Protocolo Crew | Patrón → editor | *Proponer solución y crear protocolo* |
+| 8 | Validación | Editor | *Enviar a validación y aprobar* |
+| 9 | Publicación | Editor | *Publicar protocolo* |
+| 10 | Visible para el Rappitendero | `/protocolos/…` | — |
+
+   Si no pulsas el botón de acción, **Siguiente** lo ejecuta por ti, así que el caso nunca queda a medias.
+5. Al terminar se abre el **cierre**, con los 8 mensajes clave y el enlace para repetir el recorrido o explorar
+   libremente.
+
+Consejos: presenta en una ventana de al menos 1280 px de ancho; el icono de guion en la barra muestra u oculta el
+texto; la **X** sale del modo presentación sin perder lo hecho.
+
+## Cómo usar la demo libremente
 
 En la pantalla de entrada eliges un perfil, sin contraseña:
 
@@ -51,16 +83,11 @@ En la pantalla de entrada eliges un perfil, sin contraseña:
 | Copiloto | Andrés · 3 años en Chapinero | `/copiloto` |
 | Administrador Rappi | Laura · Operaciones | `/admin` |
 
-- Todo lo que crees (casos, postas, mensajes, protocolos, cambios de estado) **persiste durante la sesión del
-  navegador**. Al cerrar la pestaña vuelve a los datos iniciales.
-- **Cambiar perfil** y **Reiniciar demo** están en la barra lateral (desktop) o en el menú **Más** (mobile).
-- Un recorrido sugerido para presentar:
-  1. *Nuevo* → **Necesito una mano** → “Cliente no responde” → enviar → ver el **Protocolo Crew #014**.
-  2. *Nuevo* → **Mi Copiloto** → **Encuentra tu Copiloto** → pedir acompañamiento → chatear.
-  3. *Copiloto* → aceptar o rechazar una invitación (sin penalización) → **Perfil** → *Dejar de participar*.
-  4. *Admin* → **Experiencias** → seleccionar varias → *Agrupar en patrón* → **Problemas recurrentes** →
-     *Proponer solución y crear protocolo* → completar → *Enviar a validación* → *Aprobar* → *Publicar*.
-  5. Cambiar a *Nuevo* → **Protocolos Crew**: el nuevo protocolo ya aparece publicado.
+- Todo es **MODO DEMO**: personas, historias, protocolos, beneficios y métricas son ficticios. El indicador está
+  siempre visible arriba.
+- Lo que crees persiste durante la sesión del navegador. **Cambiar perfil** y **Reiniciar demo** están en la
+  barra lateral (desktop) o en el menú (mobile).
+- `/como-funciona` explica la propuesta dentro de la plataforma, para cualquier perfil.
 
 ## Pantallas
 
@@ -78,6 +105,8 @@ En la pantalla de entrada eliges un perfil, sin contraseña:
 | 10 | Panel y perfil del Copiloto | `/copiloto`, `/copiloto/perfil` |
 | 11 | Admin Rappi Crew | `/admin`, `/admin/experiencias`, `/admin/patrones`, `/admin/protocolos`, `/admin/protocolos/[id]` |
 | 12 | Analítica (datos DEMO) | `/admin/analitica` |
+| — | Cómo funciona | `/como-funciona` |
+| — | Modo presentación (portada y cierre) | `/presentacion`, `/presentacion/cierre` |
 
 ## Variables de entorno
 

@@ -23,6 +23,8 @@ import {
   MENTEES,
   PROTOCOLS,
   DEMO_RIDER,
+  PRESENTATION_CLUSTER_ID,
+  PRESENTATION_PROTOCOL_PRESET,
   TIMELINE,
   VOICES,
 } from './demo-data';
@@ -51,10 +53,16 @@ import type {
 import { delay, uid } from './utils';
 import { useToast } from '@/components/ui/toast';
 
-const STORAGE_KEY = 'rappi-crew-demo-v1';
+const STORAGE_KEY = 'rappi-crew-demo-v2';
+
+export interface PresentationState {
+  active: boolean;
+  step: number;
+  protocolId: string | null;
+}
 
 export interface CrewState {
-  version: 1;
+  version: 2;
   role: Role | null;
   rider: RiderProfile;
   onboarding: OnboardingStep[];
@@ -75,6 +83,7 @@ export interface CrewState {
   timeline: TimelineEvent[];
   incidents: IncidentReport[];
   copilotSelfStatus: CopilotStatus;
+  presentation: PresentationState;
 }
 
 /** El Copiloto que usa el perfil demo "Copiloto" (Andrés). */
@@ -83,7 +92,7 @@ export const RIDER_THREAD_ID = 'th-valentina';
 
 function initialState(): CrewState {
   return {
-    version: 1,
+    version: 2,
     role: null,
     rider: DEMO_RIDER,
     onboarding: INITIAL_ONBOARDING,
@@ -104,6 +113,7 @@ function initialState(): CrewState {
     timeline: TIMELINE,
     incidents: [],
     copilotSelfStatus: 'activo',
+    presentation: { active: false, step: 0, protocolId: null },
   };
 }
 
@@ -121,7 +131,7 @@ interface CrewContextValue {
   logout: () => void;
   resetDemo: () => void;
   completeStep: (id: string) => void;
-  sendMessage: (threadId: string, from: 'nuevo' | 'copiloto', text: string) => void;
+  sendMessage: (threadId: string, from: 'nuevo' | 'copiloto', text: string, replyText?: string) => void;
   requestCopilot: (copilotId: string) => Promise<void>;
   submitHelp: (input: { category: HelpCategory; text: string }) => Promise<HelpRequest>;
   rateHelp: (id: string, helpful: boolean) => void;
@@ -140,11 +150,15 @@ interface CrewContextValue {
     target: { clusterId: string } | { title: string; category: HelpCategory },
   ) => string;
   setClusterStatus: (id: string, status: ClusterStatus) => void;
-  createProtocol: (clusterId?: string) => string;
+  createProtocol: (clusterId?: string, preset?: Partial<Protocol>) => string;
   saveProtocol: (protocol: Protocol) => Promise<void>;
   setProtocolStatus: (id: string, status: ProtocolStatus) => Promise<void>;
   deleteProtocol: (id: string) => void;
   setHelpStatus: (id: string, status: HelpStatus) => void;
+  // Modo presentación
+  startPresentation: () => void;
+  setPresentation: (patch: Partial<PresentationState>) => void;
+  stopPresentation: () => void;
 }
 
 const CrewContext = createContext<CrewContextValue | null>(null);
@@ -166,7 +180,7 @@ export function CrewProvider({ children }: { children: ReactNode }) {
       const raw = window.sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as CrewState;
-        if (parsed?.version === 1) base = { ...initialState(), ...parsed };
+        if (parsed?.version === 2) base = { ...initialState(), ...parsed };
       }
     } catch {
       // sessionStorage no disponible: seguimos con los datos demo.
@@ -253,15 +267,16 @@ export function CrewProvider({ children }: { children: ReactNode }) {
     }));
 
   const sendMessage = useCallback(
-    (threadId: string, from: 'nuevo' | 'copiloto', text: string) => {
+    (threadId: string, from: 'nuevo' | 'copiloto', text: string, replyText?: string) => {
       appendMessage(threadId, { id: uid('msg'), from, text, at: nowIso() });
       if (from === 'nuevo') completeStep('chat');
       const replier = from === 'nuevo' ? 'copiloto' : 'nuevo';
       setTyping((t) => ({ ...t, [threadId]: true }));
       window.setTimeout(() => {
         const count = stateRef.current.threads[threadId]?.length ?? 0;
-        const reply =
-          replier === 'copiloto'
+        const reply = replyText
+          ? replyText
+          : replier === 'copiloto'
             ? COPILOT_REPLIES[count % COPILOT_REPLIES.length]
             : ['¡Gracias! Me sirve mucho 🙏', 'Listo, lo intento así en el próximo pedido.', 'Qué bueno saberlo, no tenía idea.'][
                 count % 3
@@ -572,9 +587,10 @@ export function CrewProvider({ children }: { children: ReactNode }) {
   );
 
   const createProtocol = useCallback(
-    (clusterId?: string) => {
+    (clusterId?: string, preset?: Partial<Protocol>) => {
       const s = stateRef.current;
       const cluster = s.clusters.find((c) => c.id === clusterId);
+      if (clusterId === PRESENTATION_CLUSTER_ID && !preset) preset = PRESENTATION_PROTOCOL_PRESET;
       const exps = cluster ? s.experiences.filter((e) => cluster.experienceIds.includes(e.id)) : [];
       const number = Math.max(0, ...s.protocols.map((p) => p.number)) + 1;
       const protocol: Protocol = {
@@ -600,6 +616,7 @@ export function CrewProvider({ children }: { children: ReactNode }) {
         helpful: 0,
         readMinutes: 2,
         clusterId: cluster?.id,
+        ...preset,
       };
       setState((st) => ({
         ...st,
@@ -682,6 +699,22 @@ export function CrewProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
+  const startPresentation = useCallback(() => {
+    setState(() => ({
+      ...initialState(),
+      role: 'nuevo',
+      presentation: { active: true, step: 0, protocolId: null },
+    }));
+  }, []);
+
+  const setPresentation = useCallback((patch: Partial<PresentationState>) => {
+    setState((s) => ({ ...s, presentation: { ...s.presentation, ...patch } }));
+  }, []);
+
+  const stopPresentation = useCallback(() => {
+    setState((s) => ({ ...s, presentation: { ...s.presentation, active: false } }));
+  }, []);
+
   const value = useMemo<CrewContextValue>(
     () => ({
       state,
@@ -714,6 +747,9 @@ export function CrewProvider({ children }: { children: ReactNode }) {
       setProtocolStatus,
       deleteProtocol,
       setHelpStatus,
+      startPresentation,
+      setPresentation,
+      stopPresentation,
     }),
     [
       state,
@@ -744,6 +780,9 @@ export function CrewProvider({ children }: { children: ReactNode }) {
       setProtocolStatus,
       deleteProtocol,
       setHelpStatus,
+      startPresentation,
+      setPresentation,
+      stopPresentation,
     ],
   );
 

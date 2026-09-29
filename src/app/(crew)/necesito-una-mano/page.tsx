@@ -46,7 +46,7 @@ function HelpFlow() {
   const [category, setCategory] = useState<HelpCategory | null>(
     initial && HELP_CATEGORIES.some((c) => c.id === initial) ? initial : null,
   );
-  const [text, setText] = useState('');
+  const [text, setText] = useState(() => params.get('t')?.slice(0, 600) ?? '');
   const [errors, setErrors] = useState<{ category?: string; text?: string }>({});
   const [phase, setPhase] = useState<'form' | 'analyzing' | 'result'>('form');
   const [step, setStep] = useState(0);

@@ -13,7 +13,10 @@ import {
   LifeBuoy,
   LogOut,
   Megaphone,
-  MoreHorizontal,
+  Menu,
+  Compass,
+  Eye,
+  Presentation,
   RotateCcw,
   Send,
   UserCheck,
@@ -30,6 +33,8 @@ import { Logo, LogoMark } from './logo';
 import { Avatar } from './ui/avatar';
 import { Modal } from './ui/modal';
 import { PageSkeleton } from './ui/states';
+import { DemoBadge } from './demo-badge';
+import { PresentationBar } from './presentation-bar';
 
 interface NavItem {
   href: string;
@@ -39,42 +44,56 @@ interface NavItem {
   exact?: boolean;
 }
 
-const NAV: Record<Role, { main: NavItem[]; mobile: string[]; center?: string }> = {
+interface RoleNav {
+  /** Acciones principales, destacadas visualmente. */
+  primary: NavItem[];
+  /** Secciones de apoyo, más discretas. */
+  secondary: NavItem[];
+  mobile: string[];
+  center?: string;
+}
+
+const HOW: NavItem = { href: '/como-funciona', label: 'Cómo funciona', short: 'Cómo funciona', icon: Compass };
+const BENEFITS: NavItem = { href: '/beneficios', label: 'Beneficios Crew', short: 'Beneficios', icon: Gift };
+const VOICE: NavItem = { href: '/voz-de-la-crew', label: 'La Voz de la Crew', short: 'La Voz', icon: Megaphone };
+const HELP: NavItem = { href: '/necesito-una-mano', label: 'Necesito una mano', short: 'Una mano', icon: LifeBuoy };
+const PROTOCOLS: NavItem = { href: '/protocolos', label: 'Protocolos Crew', short: 'Protocolos', icon: BookOpen };
+const POSTA: NavItem = { href: '/pasa-la-posta', label: 'Pasa la Posta', short: 'Posta', icon: Send };
+
+const NAV: Record<Role, RoleNav> = {
   nuevo: {
-    main: [
+    primary: [
       { href: '/inicio', label: 'Inicio', short: 'Inicio', icon: Home },
       { href: '/mi-copiloto', label: 'Mi Copiloto', short: 'Copiloto', icon: Users },
-      { href: '/necesito-una-mano', label: 'Necesito una mano', short: 'Una mano', icon: LifeBuoy },
-      { href: '/protocolos', label: 'Protocolos Crew', short: 'Protocolos', icon: BookOpen },
-      { href: '/pasa-la-posta', label: 'Pasa la Posta', short: 'Posta', icon: Send },
-      { href: '/beneficios', label: 'Beneficios Crew', short: 'Beneficios', icon: Gift },
-      { href: '/voz-de-la-crew', label: 'La Voz de la Crew', short: 'La Voz', icon: Megaphone },
+      HELP,
+      PROTOCOLS,
+      POSTA,
     ],
-    mobile: ['/inicio', '/mi-copiloto', '/necesito-una-mano', '/protocolos'],
+    secondary: [HOW, BENEFITS, VOICE],
+    mobile: ['/inicio', '/mi-copiloto', '/necesito-una-mano', '/protocolos', '/pasa-la-posta'],
     center: '/necesito-una-mano',
   },
   copiloto: {
-    main: [
-      { href: '/copiloto', label: 'Panel Copiloto', short: 'Panel', icon: LayoutDashboard, exact: true },
-      { href: '/copiloto/perfil', label: 'Mi perfil Copiloto', short: 'Perfil', icon: UserCheck },
-      { href: '/pasa-la-posta', label: 'Pasa la Posta', short: 'Posta', icon: Send },
-      { href: '/protocolos', label: 'Protocolos Crew', short: 'Protocolos', icon: BookOpen },
-      { href: '/necesito-una-mano', label: 'Necesito una mano', short: 'Una mano', icon: LifeBuoy },
-      { href: '/beneficios', label: 'Beneficios Crew', short: 'Beneficios', icon: Gift },
-      { href: '/voz-de-la-crew', label: 'La Voz de la Crew', short: 'La Voz', icon: Megaphone },
+    primary: [
+      { href: '/copiloto', label: 'Mi panel de Copiloto', short: 'Panel', icon: LayoutDashboard, exact: true },
+      POSTA,
+      PROTOCOLS,
+      HELP,
     ],
-    mobile: ['/copiloto', '/protocolos', '/pasa-la-posta', '/copiloto/perfil'],
+    secondary: [{ href: '/copiloto/perfil', label: 'Mi perfil', short: 'Perfil', icon: UserCheck }, HOW, BENEFITS, VOICE],
+    mobile: ['/copiloto', '/protocolos', '/pasa-la-posta', '/necesito-una-mano', '/copiloto/perfil'],
     center: '/pasa-la-posta',
   },
   admin: {
-    main: [
+    primary: [
       { href: '/admin', label: 'Resumen', short: 'Resumen', icon: LayoutDashboard, exact: true },
       { href: '/admin/experiencias', label: 'Experiencias y casos', short: 'Casos', icon: Inbox },
       { href: '/admin/patrones', label: 'Problemas recurrentes', short: 'Patrones', icon: Layers },
       { href: '/admin/protocolos', label: 'Gestión de protocolos', short: 'Protocolos', icon: BookOpen },
       { href: '/admin/analitica', label: 'Analítica', short: 'Analítica', icon: BarChart3 },
     ],
-    mobile: ['/admin', '/admin/experiencias', '/admin/protocolos', '/admin/analitica'],
+    secondary: [HOW, { href: '/protocolos', label: 'Ver como Rappitendero', short: 'Vista rider', icon: Eye }],
+    mobile: ['/admin', '/admin/experiencias', '/admin/patrones', '/admin/protocolos', '/admin/analitica'],
   },
 };
 
@@ -96,6 +115,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
   const role = state.role;
+  const presenting = state.presentation.active;
 
   useEffect(() => {
     if (hydrated && !role) router.replace('/');
@@ -104,6 +124,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   useEffect(() => setMoreOpen(false), [pathname]);
 
   const nav = role ? NAV[role] : null;
+  const all = nav ? [...nav.primary, ...nav.secondary] : [];
   const user =
     role === 'admin'
       ? { name: DEMO_ADMIN.name, initials: DEMO_ADMIN.initials, color: '#15151C' }
@@ -120,53 +141,74 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-dvh bg-surface">
       {/* Sidebar desktop */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[272px] flex-col border-r border-ink-100 bg-white lg:flex">
-        <div className="px-6 pb-4 pt-6">
-          <Link href={nav ? nav.main[0].href : '/'} aria-label="Ir al inicio">
+        <div className="px-6 pb-3 pt-6">
+          <Link href={nav ? nav.primary[0].href : '/'} aria-label="Ir al inicio">
             <Logo />
           </Link>
+          <DemoBadge className="mt-3" />
         </div>
         {role === 'admin' && (
-          <p className="mx-6 mb-2 rounded-xl bg-ink-900 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white">
+          <p className="mx-6 mb-1 mt-1 rounded-xl bg-ink-900 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white">
             Panel Rappi Crew
           </p>
         )}
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2" aria-label="Navegación principal">
-          {nav?.main.map((item) => {
-            const active = isActive(pathname, item);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[14px] font-semibold transition-all',
-                  active ? 'bg-brand-50 text-brand-700' : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900',
-                )}
-              >
-                <span
+        <nav className="flex-1 overflow-y-auto px-3 py-2" aria-label="Navegación principal">
+          <div className="space-y-1">
+            {nav?.primary.map((item) => {
+              const active = isActive(pathname, item);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
                   className={cn(
-                    'flex h-9 w-9 items-center justify-center rounded-xl transition-all',
-                    active ? 'bg-brand-gradient text-white shadow-glow' : 'bg-ink-50 text-ink-500 group-hover:bg-white',
+                    'group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[14px] font-bold transition-all',
+                    active ? 'bg-brand-50 text-brand-700' : 'text-ink-700 hover:bg-ink-50 hover:text-ink-900',
                   )}
                 >
-                  <item.icon className="h-[18px] w-[18px]" />
-                </span>
-                {item.label}
-              </Link>
-            );
-          })}
-          {role === 'admin' && (
-            <Link
-              href="/protocolos"
-              className="mt-4 flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-semibold text-ink-500 hover:bg-ink-50"
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-50">
-                <Users className="h-[18px] w-[18px]" />
-              </span>
-              Ver como Rappitendero
-            </Link>
-          )}
+                  <span
+                    className={cn(
+                      'flex h-9 w-9 items-center justify-center rounded-xl transition-all',
+                      active ? 'bg-brand-gradient text-white shadow-glow' : 'bg-ink-50 text-ink-600 group-hover:bg-white',
+                    )}
+                  >
+                    <item.icon className="h-[18px] w-[18px]" />
+                  </span>
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+          <p className="mb-1 mt-5 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-400">También</p>
+          <div className="space-y-0.5">
+            {nav?.secondary.map((item) => {
+              const active = isActive(pathname, item);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-semibold transition',
+                    active ? 'bg-ink-100 text-ink-900' : 'text-ink-500 hover:bg-ink-50 hover:text-ink-800',
+                  )}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
         </nav>
         <div className="border-t border-ink-100 p-4">
+          <Link
+            href="/presentacion"
+            className="mb-3 flex items-center gap-2.5 rounded-2xl bg-ink-900 px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-ink-800"
+          >
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-gradient">
+              <Presentation className="h-4 w-4" />
+            </span>
+            <span className="whitespace-nowrap">Modo presentación</span>
+            {presenting && <span className="ml-auto whitespace-nowrap rounded-full bg-brand-500 px-1.5 text-[10px]">EN CURSO</span>}
+          </Link>
           <div className="flex items-center gap-3 rounded-2xl bg-ink-50 p-3">
             <Avatar initials={user.initials} color={user.color} size="sm" />
             <div className="min-w-0 flex-1">
@@ -188,33 +230,44 @@ export function AppShell({ children }: { children: ReactNode }) {
               <RotateCcw className="h-3.5 w-3.5" /> Reiniciar demo
             </button>
           </div>
-          <p className="mt-2 flex items-center justify-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-400">
-            <Database className="h-3 w-3" />
-            {remoteEnabled ? 'Conectado a Supabase' : 'Modo demo · datos de sesión'}
-          </p>
+          {remoteEnabled && (
+            <p className="mt-2 flex items-center justify-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-400">
+              <Database className="h-3 w-3" /> Conectado a Supabase
+            </p>
+          )}
         </div>
       </aside>
 
       {/* Header mobile */}
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-ink-100/70 bg-white/85 px-4 py-3 backdrop-blur-xl lg:hidden">
-        <Link href={nav ? nav.main[0].href : '/'} aria-label="Ir al inicio">
+      <header className="sticky top-0 z-40 flex items-center justify-between gap-2 border-b border-ink-100/70 bg-white/85 px-4 py-3 backdrop-blur-xl lg:hidden">
+        <Link href={nav ? nav.primary[0].href : '/'} aria-label="Ir al inicio">
           <Logo compact />
         </Link>
-        <button
-          onClick={() => setMoreOpen(true)}
-          className="flex items-center gap-2 rounded-full bg-ink-50 py-1 pl-1 pr-3 text-xs font-semibold text-ink-700 transition active:scale-95"
-          aria-label="Abrir menú de perfil"
-        >
-          <Avatar initials={user.initials} color={user.color} size="xs" />
-          {role === 'admin' ? 'Admin' : role === 'copiloto' ? 'Copiloto' : 'Nuevo'}
-        </button>
+        <div className="flex items-center gap-2">
+          <DemoBadge align="right" />
+          <button
+            onClick={() => setMoreOpen(true)}
+            className="flex items-center gap-1.5 rounded-full bg-ink-50 py-1 pl-1 pr-2.5 text-xs font-semibold text-ink-700 transition active:scale-95"
+            aria-label="Abrir menú"
+          >
+            <Avatar initials={user.initials} color={user.color} size="xs" />
+            <Menu className="h-4 w-4" />
+          </button>
+        </div>
       </header>
 
       <main className="lg:pl-[272px]">
-        <div className="mx-auto w-full max-w-6xl px-4 pb-32 pt-6 sm:px-6 lg:px-10 lg:pb-16 lg:pt-10">
+        <div
+          className={cn(
+            'mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 lg:px-10 lg:pt-10',
+            presenting ? 'pb-64 lg:pb-48' : 'pb-32 lg:pb-16',
+          )}
+        >
           {!hydrated || !role ? <PageSkeleton /> : children}
         </div>
       </main>
+
+      {hydrated && presenting && <PresentationBar />}
 
       {/* Bottom nav mobile */}
       {nav && (
@@ -224,7 +277,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         >
           <div className="mx-auto grid max-w-md grid-cols-5 px-2">
             {nav.mobile.map((href) => {
-              const item = nav.main.find((i) => i.href === href)!;
+              const item = all.find((i) => i.href === href)!;
               const active = isActive(pathname, item);
               if (href === nav.center) {
                 return (
@@ -237,9 +290,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     >
                       <item.icon className="h-6 w-6" />
                     </span>
-                    <span className={cn('mt-1 text-[10px] font-bold', active ? 'text-brand-600' : 'text-ink-500')}>
-                      {item.short}
-                    </span>
+                    <span className={cn('mt-1 text-[10px] font-bold', active ? 'text-brand-600' : 'text-ink-500')}>{item.short}</span>
                   </Link>
                 );
               }
@@ -258,13 +309,6 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </Link>
               );
             })}
-            <button
-              onClick={() => setMoreOpen(true)}
-              className="flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-bold text-ink-400"
-            >
-              <MoreHorizontal className="h-[22px] w-[22px]" />
-              Más
-            </button>
           </div>
         </nav>
       )}
@@ -274,40 +318,48 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Avatar initials={user.initials} color={user.color} size="md" />
           <div className="min-w-0">
             <p className="truncate font-bold text-ink-900">{user.name}</p>
-            <p className="text-xs text-ink-500">{remoteEnabled ? 'Conectado a Supabase' : 'Modo demo · datos de sesión'}</p>
+            <p className="text-xs text-ink-500">{remoteEnabled ? 'Conectado a Supabase' : 'Modo demo · datos de ejemplo'}</p>
           </div>
           <LogoMark className="ml-auto h-8 w-8 rounded-xl" />
         </div>
         <div className="grid grid-cols-2 gap-2">
-          {nav?.main.map((item) => (
+          {nav?.primary.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setMoreOpen(false)}
               className={cn(
-                'flex items-center gap-2.5 rounded-2xl p-3 text-[13px] font-semibold transition',
-                isActive(pathname, item) ? 'bg-brand-50 text-brand-700' : 'bg-white text-ink-700 ring-1 ring-ink-100 hover:bg-ink-50',
+                'flex items-center gap-2.5 rounded-2xl p-3 text-[13px] font-bold transition',
+                isActive(pathname, item) ? 'bg-brand-50 text-brand-700' : 'bg-white text-ink-800 ring-1 ring-ink-100 hover:bg-ink-50',
               )}
             >
               <item.icon className="h-5 w-5 shrink-0" />
               <span className="leading-tight">{item.label}</span>
             </Link>
           ))}
-          {role === 'admin' && (
-            <Link
-              href="/protocolos"
-              onClick={() => setMoreOpen(false)}
-              className="flex items-center gap-2.5 rounded-2xl bg-white p-3 text-[13px] font-semibold text-ink-700 ring-1 ring-ink-100"
-            >
-              <Users className="h-5 w-5" /> Ver como Rappitendero
-            </Link>
-          )}
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2 pb-2">
-          <button
-            onClick={switchProfile}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-ink-900 p-3 text-sm font-semibold text-white"
-          >
+        <p className="mb-1 mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-400">También</p>
+        <div className="divide-y divide-ink-100 rounded-2xl ring-1 ring-ink-100">
+          {nav?.secondary.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setMoreOpen(false)}
+              className="flex items-center gap-2.5 px-3 py-2.5 text-[13px] font-semibold text-ink-600 hover:bg-ink-50"
+            >
+              <item.icon className="h-4 w-4 shrink-0" /> {item.label}
+            </Link>
+          ))}
+        </div>
+        <Link
+          href="/presentacion"
+          onClick={() => setMoreOpen(false)}
+          className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient p-3 text-sm font-bold text-white shadow-glow"
+        >
+          <Presentation className="h-4 w-4" /> Modo presentación
+        </Link>
+        <div className="mt-2 grid grid-cols-2 gap-2 pb-2">
+          <button onClick={switchProfile} className="flex items-center justify-center gap-2 rounded-2xl bg-ink-900 p-3 text-sm font-semibold text-white">
             <LogOut className="h-4 w-4" /> Cambiar perfil
           </button>
           <button

@@ -15,14 +15,13 @@ import {
 } from 'lucide-react';
 import { useCrew } from '@/lib/store';
 import { CLUSTER_STATUS, HELP_STATUS, categoryLabel } from '@/lib/labels';
-import { flowSteps } from '@/lib/admin';
 import { DEMO_ADMIN } from '@/lib/demo-data';
-import { cn, timeAgo } from '@/lib/utils';
+import { cn, formatNumber, timeAgo } from '@/lib/utils';
 import { PageHeader } from '@/components/page-header';
-import { Card, SectionTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button, ButtonLink } from '@/components/ui/button';
-import { AdminFlow } from '@/components/admin-flow';
+import { CrewFlow } from '@/components/crew-flow';
 import { CategoryIcon } from '@/components/category-icon';
 
 export default function AdminHome() {
@@ -64,6 +63,41 @@ export default function AdminHome() {
         }
       />
 
+      <section className="mb-8 animate-fade-up rounded-[28px] bg-white p-4 shadow-card ring-1 ring-ink-900/[0.04] sm:p-6">
+        <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-brand-600">El corazón de Rappi Crew</p>
+            <p className="text-xl font-extrabold tracking-tight text-ink-900">De la experiencia al Protocolo Crew</p>
+          </div>
+          <p className="max-w-sm text-xs text-ink-500">
+            Los consejos de la Crew no se vuelven reglas automáticamente: Rappi identifica, propone y valida.
+          </p>
+        </div>
+        <CrewFlow
+          counts={[
+            state.helpRequests.length,
+            state.experiences.length,
+            state.clusters.filter((c) => c.status !== 'publicado').length,
+            state.protocols.filter((p) => p.status === 'borrador').length,
+            state.protocols.filter((p) => p.status === 'en_validacion' || p.status === 'aprobado').length,
+            validated.length,
+            formatNumber(validated.reduce((a, p) => a + p.views, 0)),
+          ]}
+          links={[
+            '/admin/experiencias?tab=casos',
+            '/admin/experiencias',
+            '/admin/patrones',
+            '/admin/protocolos?s=borrador',
+            '/admin/protocolos?s=en_validacion',
+            '/admin/protocolos?s=publicado',
+            '/admin/analitica',
+          ]}
+        />
+        <p className="mt-2 text-center text-[11px] text-ink-400">
+          Números en vivo de esta demo: casos · experiencias · patrones abiertos · borradores · en validación · publicados · consultas
+        </p>
+      </section>
+
       <div className="stagger grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         {kpis.map((k) => (
           <Link key={k.label} href={k.href} className="group rounded-3xl bg-white p-4 shadow-card ring-1 ring-ink-900/[0.04] transition hover:-translate-y-0.5 hover:shadow-lift">
@@ -79,10 +113,6 @@ export default function AdminHome() {
         ))}
       </div>
 
-      <section className="mt-8">
-        <SectionTitle title="De la experiencia al protocolo" subtitle="Cada paso del flujo con lo que tienes pendiente." />
-        <AdminFlow steps={flowSteps(state)} />
-      </section>
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[1.6fr_1fr]">
         <Card className="overflow-hidden">

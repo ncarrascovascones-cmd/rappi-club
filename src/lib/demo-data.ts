@@ -694,6 +694,34 @@ export const EXPERIENCES: Experience[] = [
     thanks: 2,
     status: 'nueva',
   },
+  {
+    id: 'e-13',
+    author: 'Paola Rincón',
+    initials: 'PR',
+    color: '#5842C4',
+    authorRole: 'rappitendero',
+    months: 16,
+    zone: 'Centro',
+    category: 'problema_tienda',
+    text: 'Di tres vueltas a la manzana: la recogida era por el parqueadero y nadie lo decía. Ahora le pregunto al vigilante antes de buscar la puerta principal.',
+    createdAt: '2026-09-28T16:40:00',
+    thanks: 4,
+    status: 'nueva',
+  },
+  {
+    id: 'e-14',
+    author: 'Kevin Martínez',
+    initials: 'KM',
+    color: '#1F62B5',
+    authorRole: 'rappitendero',
+    months: 9,
+    zone: 'Salitre',
+    category: 'problema_tienda',
+    text: 'En centros comerciales el punto de recogida suele estar en el sótano o en una puerta de servicio. Revisar las notas de la tienda en la app me ahorra 10 minutos.',
+    createdAt: '2026-09-29T09:10:00',
+    thanks: 3,
+    status: 'nueva',
+  },
 ];
 
 export const CLUSTERS: Cluster[] = [
@@ -1215,4 +1243,29 @@ export const ANALYTICS = {
     { category: 'problema_incentivo', value: 268 },
     { category: 'otro', value: 136 },
   ] as { category: import('./types').HelpCategory; value: number }[],
+};
+
+/** Contenido propuesto por Rappi para el patrón usado en el Modo presentación. */
+export const PRESENTATION_CLUSTER_ID = 'cl-8';
+export const PRESENTATION_EXPERIENCE_IDS = ['e-11', 'e-13', 'e-14'];
+export const PRESENTATION_PROTOCOL_PRESET = {
+  title: 'Punto de recogida difícil de ubicar',
+  category: 'problema_tienda' as const,
+  summary: 'Qué hacer cuando no encuentras por dónde recoger el pedido en la tienda.',
+  problem:
+    'Llegas a la tienda y no encuentras el punto de recogida: la entrada está por detrás, en un parqueadero o en una puerta de servicio.',
+  situation:
+    'Frecuente en el Centro y en centros comerciales. Los nuevos pierden tiempo dando vueltas y llegan tarde a la entrega.',
+  steps: [
+    'Antes de llegar, revisa las notas de la tienda en la app: muchas indican la entrada de recogida.',
+    'Si no hay indicación, pregunta al vigilante o al personal de la entrada principal por el punto de domiciliarios.',
+    'En centros comerciales, busca la puerta de servicio o el sótano antes de entrar por el acceso de clientes.',
+    'Si tras unos minutos no lo encuentras, escribe a la tienda por el chat del pedido.',
+  ],
+  escalate: [
+    'Si la tienda no responde y el tiempo de espera supera lo que indica la app.',
+    'Si la dirección de la tienda en la app no coincide con la ubicación real.',
+  ],
+  origin:
+    'Construido a partir de experiencias reales de Rappitenderos del Centro y del Salitre, revisado y validado por el equipo de Operaciones de Rappi.',
 };

@@ -18,7 +18,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { useCrew, useSelectors } from '@/lib/store';
-import { COPILOT_STATUS, SCHEDULE_LABEL, VEHICLE_LABEL } from '@/lib/labels';
+import { SCHEDULE_LABEL, VEHICLE_LABEL } from '@/lib/labels';
 import type { Invitation, Mentee } from '@/lib/types';
 import { cn, protocolShort } from '@/lib/utils';
 import { PageHeader } from '@/components/page-header';
@@ -30,7 +30,7 @@ import { Progress } from '@/components/ui/progress';
 import { EmptyState } from '@/components/ui/states';
 import { Modal } from '@/components/ui/modal';
 import { ChatPanel } from '@/components/chat-panel';
-import { VoluntaryNotice } from '@/components/voluntary-notice';
+import { ParticipationCard } from '@/components/participation-card';
 import { useToast } from '@/components/ui/toast';
 
 const MOOD: Record<Mentee['mood'], { label: string; tone: 'mint' | 'sun' | 'brand' }> = {
@@ -53,43 +53,13 @@ export default function CopilotoPanel() {
       <PageHeader
         eyebrow="Panel Copiloto"
         title={`Hola, ${selfCopilot.firstName} 🙌`}
-        description="Gracias por compartir tu experiencia con quienes empiezan. Aquí decides cuánto y cuándo participar."
-        actions={
-          <ButtonLink href="/copiloto/perfil" variant="secondary" size="sm">
-            <Badge tone={COPILOT_STATUS[status].tone} dot>
-              {COPILOT_STATUS[status].label}
-            </Badge>
-            Gestionar participación
-          </ButtonLink>
-        }
+        description="Gracias por compartir tu experiencia con quienes empiezan. Ser Copiloto es voluntario: tú decides si participas y cuánto."
       />
 
-      {status !== 'activo' && (
-        <div
-          className={cn(
-            'mb-6 flex flex-col gap-3 rounded-3xl p-5 sm:flex-row sm:items-center',
-            status === 'pausa' ? 'bg-sun-50 ring-1 ring-sun-100' : 'bg-ink-100',
-          )}
-        >
-          <PauseCircle className={cn('h-8 w-8 shrink-0', status === 'pausa' ? 'text-sun-500' : 'text-ink-500')} />
-          <div className="flex-1">
-            <p className="font-extrabold text-ink-900">
-              {status === 'pausa' ? 'Estás en pausa' : 'No estás participando como Copiloto'}
-            </p>
-            <p className="text-sm text-ink-600">
-              {status === 'pausa'
-                ? 'No recibirás nuevas invitaciones. Tus acompañados actuales pueden seguir escribiéndote.'
-                : 'Tu decisión se respeta, sin penalización. Puedes volver cuando quieras.'}
-            </p>
-          </div>
-          <ButtonLink href="/copiloto/perfil" variant="dark" size="sm">
-            {status === 'pausa' ? 'Reactivar' : 'Volver a participar'}
-          </ButtonLink>
-        </div>
-      )}
-
+      <div className="mb-6 grid gap-4 lg:grid-cols-[1.1fr_1fr]">
+      <ParticipationCard />
       {/* Stats */}
-      <div className="stagger mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="stagger grid grid-cols-2 gap-3">
         {[
           { icon: Users, label: 'Acompañando ahora', value: state.mentees.length, c: 'text-brand-600 bg-brand-50' },
           { icon: Sparkles, label: 'Nuevos acompañados', value: selfCopilot.accompanied, c: 'text-mint-600 bg-mint-50' },
@@ -104,6 +74,7 @@ export default function CopilotoPanel() {
             <p className="text-xs font-semibold text-ink-500">{s.label}</p>
           </Card>
         ))}
+      </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
@@ -195,8 +166,6 @@ export default function CopilotoPanel() {
         </div>
 
         <div className="space-y-6">
-          <VoluntaryNotice variant="copiloto" />
-
           <Card className="relative overflow-hidden p-5">
             <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-brand-100 blur-2xl" />
             <p className="relative text-lg font-extrabold text-ink-900">Pasa la Posta</p>

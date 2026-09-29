@@ -169,7 +169,6 @@ function BenefitsView() {
         })}
       </div>
 
-      <p className="mt-8 text-center text-xs text-ink-400">Beneficios sujetos a disponibilidad y acuerdos con aliados.</p>
 
       <Modal
         open={!!open}

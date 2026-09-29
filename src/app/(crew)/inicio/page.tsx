@@ -3,20 +3,18 @@
 import Link from 'next/link';
 import {
   ArrowRight,
-  BookOpen,
   Check,
   ChevronRight,
   Gift,
-  GraduationCap,
-  HeartPulse,
   LifeBuoy,
   MapPin,
   MessageCircle,
   Send,
   Users,
-  Wrench,
   Bike,
   Sparkles,
+  Megaphone,
+  Compass,
 } from 'lucide-react';
 import { useCrew, useSelectors, RIDER_THREAD_ID } from '@/lib/store';
 import { VEHICLE_LABEL } from '@/lib/labels';
@@ -28,6 +26,7 @@ import { ButtonLink } from '@/components/ui/button';
 import { Ring } from '@/components/ui/progress';
 import { EmptyState } from '@/components/ui/states';
 import { ProtocolCard } from '@/components/protocol-card';
+import { VoluntaryNotice } from '@/components/voluntary-notice';
 
 export default function InicioPage() {
   const { state } = useCrew();
@@ -60,7 +59,8 @@ export default function InicioPage() {
               {greeting}, {rider.firstName} 👋
             </h1>
             <p className="mt-2 text-[15px] text-white/85">
-              Vas muy bien. Ya llevas {rider.deliveries} entregas y no estás solo: la Crew va contigo.
+              Llevas {rider.deliveries} entregas y la Crew va contigo. No aprendas a golpes: aprende de los que ya
+              pasaron por ahí.
             </p>
             <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5">
@@ -126,6 +126,7 @@ export default function InicioPage() {
                 Ver perfil
               </ButtonLink>
             </div>
+            <VoluntaryNotice variant="inline" className="mt-3" />
           </Card>
         ) : (
           <EmptyState
@@ -154,6 +155,59 @@ export default function InicioPage() {
             </span>
           </div>
         </Link>
+      </section>
+
+      {/* Protocolos recomendados */}
+      <section>
+        <SectionTitle
+          title="Protocolos Crew recomendados"
+          subtitle="Soluciones construidas con la experiencia de la flota y validadas por Rappi."
+          action={
+            <Link href="/protocolos" className="hidden shrink-0 text-sm font-bold text-brand-600 hover:text-brand-700 sm:inline-flex sm:items-center sm:gap-1">
+              Ver todos <ArrowRight className="h-4 w-4" />
+            </Link>
+          }
+        />
+        <div className="stagger grid gap-4 md:grid-cols-3">
+          {recommended.map((p) => (
+            <ProtocolCard key={p.id} protocol={p} />
+          ))}
+        </div>
+        <Link href="/protocolos" className="mt-3 flex items-center justify-center gap-1 text-sm font-bold text-brand-600 sm:hidden">
+          Ver todos los protocolos <ArrowRight className="h-4 w-4" />
+        </Link>
+      </section>
+
+
+      <section>
+        <Card className="relative overflow-hidden p-6">
+          <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-brand-100 blur-2xl" />
+          <div className="relative">
+            <div className="flex items-center gap-2">
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
+                <Send className="h-5 w-5" />
+              </span>
+              <p className="text-lg font-extrabold text-ink-900">Pasa la Posta</p>
+            </div>
+            <p className="mt-4 text-[17px] font-bold leading-snug text-ink-900">
+              ¿Qué aprendiste que te hubiera gustado saber cuando comenzaste?
+            </p>
+            {latestPosta && (
+              <div className="mt-4 rounded-2xl bg-ink-50 p-4">
+                <p className="text-sm leading-relaxed text-ink-700">“{latestPosta.text}”</p>
+                <div className="mt-3 flex items-center gap-2">
+                  <Avatar initials={latestPosta.initials} color={latestPosta.color} size="xs" />
+                  <p className="text-xs font-semibold text-ink-500">
+                    {latestPosta.author} · {monthsLabel(latestPosta.months)} en la calle
+                  </p>
+                </div>
+              </div>
+            )}
+            <ButtonLink href="/pasa-la-posta" className="mt-5" iconRight={<ArrowRight className="h-4 w-4" />}>
+              Compartir mi experiencia
+            </ButtonLink>
+          </div>
+        </Card>
       </section>
 
       {/* Onboarding checklist */}
@@ -189,107 +243,31 @@ export default function InicioPage() {
         </div>
       </section>
 
-      {/* Protocolos recomendados */}
+      {/* Secciones secundarias */}
       <section>
-        <SectionTitle
-          title="Protocolos Crew recomendados"
-          subtitle="Soluciones construidas con la experiencia de la flota y validadas por Rappi."
-          action={
-            <Link href="/protocolos" className="hidden shrink-0 text-sm font-bold text-brand-600 hover:text-brand-700 sm:inline-flex sm:items-center sm:gap-1">
-              Ver todos <ArrowRight className="h-4 w-4" />
+        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-400">También en la Crew</p>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {[
+            { href: '/beneficios', icon: Gift, title: 'Beneficios Crew', text: 'Movilidad, salud, familia y aprendizaje.' },
+            { href: '/voz-de-la-crew', icon: Megaphone, title: 'La Voz de la Crew', text: 'Historias de quienes pasan la posta.' },
+            { href: '/como-funciona', icon: Compass, title: 'Cómo funciona', text: 'De la experiencia al Protocolo Crew.' },
+          ].map((x) => (
+            <Link
+              key={x.href}
+              href={x.href}
+              className="group flex items-center gap-3 rounded-2xl bg-white/70 p-3 ring-1 ring-ink-100 transition hover:bg-white hover:shadow-card"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ink-50 text-ink-500">
+                <x.icon className="h-4 w-4" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-bold text-ink-800">{x.title}</span>
+                <span className="block truncate text-xs text-ink-500">{x.text}</span>
+              </span>
+              <ChevronRight className="h-4 w-4 text-ink-300 transition group-hover:translate-x-0.5" />
             </Link>
-          }
-        />
-        <div className="stagger grid gap-4 md:grid-cols-3">
-          {recommended.map((p) => (
-            <ProtocolCard key={p.id} protocol={p} />
           ))}
         </div>
-        <Link href="/protocolos" className="mt-3 flex items-center justify-center gap-1 text-sm font-bold text-brand-600 sm:hidden">
-          Ver todos los protocolos <ArrowRight className="h-4 w-4" />
-        </Link>
-      </section>
-
-      {/* Pasa la posta + Beneficios */}
-      <section className="grid gap-4 lg:grid-cols-2">
-        <Card className="relative overflow-hidden p-6">
-          <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-brand-100 blur-2xl" />
-          <div className="relative">
-            <div className="flex items-center gap-2">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
-                <Send className="h-5 w-5" />
-              </span>
-              <p className="text-lg font-extrabold text-ink-900">Pasa la Posta</p>
-            </div>
-            <p className="mt-4 text-[17px] font-bold leading-snug text-ink-900">
-              ¿Qué aprendiste que te hubiera gustado saber cuando comenzaste?
-            </p>
-            {latestPosta && (
-              <div className="mt-4 rounded-2xl bg-ink-50 p-4">
-                <p className="text-sm leading-relaxed text-ink-700">“{latestPosta.text}”</p>
-                <div className="mt-3 flex items-center gap-2">
-                  <Avatar initials={latestPosta.initials} color={latestPosta.color} size="xs" />
-                  <p className="text-xs font-semibold text-ink-500">
-                    {latestPosta.author} · {monthsLabel(latestPosta.months)} en la calle
-                  </p>
-                </div>
-              </div>
-            )}
-            <ButtonLink href="/pasa-la-posta" className="mt-5" iconRight={<ArrowRight className="h-4 w-4" />}>
-              Compartir mi experiencia
-            </ButtonLink>
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-mint-50 text-mint-600">
-                <Gift className="h-5 w-5" />
-              </span>
-              <p className="text-lg font-extrabold text-ink-900">Beneficios Crew</p>
-            </div>
-            <Link href="/beneficios" className="text-sm font-bold text-brand-600 hover:text-brand-700">
-              Explorar
-            </Link>
-          </div>
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            {[
-              { icon: Wrench, label: 'Movilidad', text: 'Descuento en mantenimiento', c: 'bg-brand-50 text-brand-600' },
-              { icon: HeartPulse, label: 'Salud', text: 'Acceso a telemedicina', c: 'bg-sky-50 text-sky-600' },
-              { icon: Users, label: 'Familia', text: 'Beneficios educativos', c: 'bg-sun-50 text-sun-700' },
-              { icon: GraduationCap, label: 'Aprendizaje', text: 'Cursos y capacitación', c: 'bg-grape-50 text-grape-600' },
-            ].map((b) => (
-              <Link
-                key={b.label}
-                href={`/beneficios?c=${b.label.toLowerCase()}`}
-                className="rounded-2xl p-3 ring-1 ring-ink-100 transition hover:-translate-y-0.5 hover:bg-ink-50"
-              >
-                <span className={cn('flex h-9 w-9 items-center justify-center rounded-xl', b.c)}>
-                  <b.icon className="h-[18px] w-[18px]" />
-                </span>
-                <p className="mt-2 text-[11px] font-bold uppercase tracking-wider text-ink-400">{b.label}</p>
-                <p className="text-sm font-bold leading-snug text-ink-900">{b.text}</p>
-              </Link>
-            ))}
-          </div>
-          <p className="mt-4 text-xs text-ink-400">Beneficios sujetos a disponibilidad y acuerdos con aliados.</p>
-        </Card>
-      </section>
-
-      <section className="flex flex-col items-start gap-4 rounded-3xl bg-white p-5 shadow-card sm:flex-row sm:items-center">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sun-50 text-sun-700">
-          <BookOpen className="h-6 w-6" />
-        </span>
-        <div className="flex-1">
-          <p className="font-extrabold text-ink-900">La Voz de la Crew</p>
-          <p className="text-sm text-ink-500">
-            Conoce a los Rappitenderos cuyas experiencias se convirtieron en Protocolos Crew.
-          </p>
-        </div>
-        <ButtonLink href="/voz-de-la-crew" variant="secondary" iconRight={<ArrowRight className="h-4 w-4" />}>
-          Ver historias
-        </ButtonLink>
       </section>
     </div>
   );

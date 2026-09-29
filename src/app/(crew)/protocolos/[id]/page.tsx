@@ -17,6 +17,8 @@ import {
   ThumbsUp,
   Users,
   Sparkles,
+  ArrowRight,
+  ShieldCheck,
 } from 'lucide-react';
 import { RIDER_THREAD_ID, useCrew } from '@/lib/store';
 import { PROTOCOL_STATUS, categoryLabel } from '@/lib/labels';
@@ -103,8 +105,11 @@ function ProtocolView({ protocol }: { protocol: Protocol }) {
         <div className="bg-dots absolute inset-0 opacity-50" />
         <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-500/30 blur-3xl" />
         <div className="relative">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-brand-300">{protocolCode(protocol.number)}</p>
+            <span className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60">
+              Protocolo de ejemplo · demo
+            </span>
           </div>
           <h1 className="mt-3 text-[32px] font-extrabold leading-tight tracking-tight sm:text-[44px]">{protocol.title}</h1>
           <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -127,10 +132,46 @@ function ProtocolView({ protocol }: { protocol: Protocol }) {
               <Clock className="h-4 w-4" /> {protocol.readMinutes} min de lectura
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Eye className="h-4 w-4" /> {formatNumber(protocol.views)} consultas
+              <Eye className="h-4 w-4" /> {formatNumber(protocol.views)} {protocol.views === 1 ? 'consulta' : 'consultas'}
             </span>
           </div>
         </div>
+      </section>
+
+      {/* Origen y validación: la Crew aporta, Rappi valida */}
+      <section className="mt-4 grid animate-fade-up gap-3 md:grid-cols-[1fr_auto_1fr]">
+        <div className="flex gap-3 rounded-3xl bg-white p-5 shadow-card ring-1 ring-brand-100">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-glow">
+            <Users className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="font-extrabold text-ink-900">Construido con experiencias reales de Rappitenderos</p>
+            <p className="mt-1 text-sm text-ink-600">
+              {protocol.experiencesCount} experiencias
+              {cluster?.zones.length ? ` de ${cluster.zones.join(', ')}` : ''} compartidas en Necesito una mano y Pasa la Posta.
+            </p>
+          </div>
+        </div>
+        <div className="hidden items-center text-ink-300 md:flex">
+          <ArrowRight className="h-5 w-5" />
+        </div>
+        <div className="flex gap-3 rounded-3xl bg-white p-5 shadow-card ring-1 ring-mint-200">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mint-gradient text-white">
+            <ShieldCheck className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="font-extrabold text-ink-900">{isPublished || protocol.status === 'aprobado' ? 'Validado por Rappi' : 'Pendiente de validación de Rappi'}</p>
+            <p className="mt-1 text-sm text-ink-600">
+              Los consejos de la Crew no se convierten automáticamente en reglas oficiales. Rappi revisa y valida la solución antes de publicarla.
+            </p>
+          </div>
+        </div>
+        {(isPublished || protocol.status === 'aprobado') && (
+          <p className="flex items-center justify-center gap-2 text-center text-xs font-semibold text-mint-700 md:col-span-3">
+            <BadgeCheck className="h-4 w-4 shrink-0" />
+            Este protocolo fue construido a partir de experiencias reales y validado por Rappi.
+          </p>
+        )}
       </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
@@ -199,10 +240,6 @@ function ProtocolView({ protocol }: { protocol: Protocol }) {
             </ul>
           </Card>
 
-          <p className="flex items-start gap-3 rounded-2xl bg-mint-50 p-4 text-sm font-semibold leading-relaxed text-mint-700 ring-1 ring-mint-100">
-            <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0" />
-            Este protocolo fue construido a partir de experiencias reales y validado por Rappi.
-          </p>
         </div>
 
         <div className="space-y-5">

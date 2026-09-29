@@ -34,7 +34,7 @@ export default function VozPage() {
       <PageHeader
         eyebrow="La Voz de la Crew"
         title="Las personas detrás de los protocolos"
-        description="Reconocemos a quienes comparten lo que saben. Aquí el reconocimiento es público y simbólico: nunca económico."
+        description="Reconocemos a quienes comparten lo que saben. El reconocimiento es público y simbólico: nunca económico. (Historias de ejemplo para esta demo.)"
       />
 
       <FeaturedStory story={featured} />

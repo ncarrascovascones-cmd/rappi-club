@@ -1,9 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { ArrowRight, BadgeCheck, HandHeart, Loader2, ShieldCheck, Sparkles, Users, Bike } from 'lucide-react';
+import { ArrowRight, BadgeCheck, HandHeart, Loader2, Presentation, ShieldCheck, Sparkles, Users, Bike } from 'lucide-react';
 import { Logo } from '@/components/logo';
+import { DemoBadge } from '@/components/demo-badge';
 import { Avatar } from '@/components/ui/avatar';
 import { useCrew } from '@/lib/store';
 import type { Role } from '@/lib/types';
@@ -33,7 +35,7 @@ const ROLES: {
     id: 'copiloto',
     title: 'Copiloto',
     who: 'Andrés · 3 años en Chapinero',
-    description: 'Comparte tu experiencia con quien empieza. Voluntario: participas solo si quieres.',
+    description: 'Comparte tu experiencia con quien empieza. Ser Copiloto es voluntario: puedes aceptar, pausar o dejar de participar sin penalización.',
     home: '/copiloto',
     icon: HandHeart,
     accent: 'from-mint-400 to-mint-600',
@@ -69,18 +71,22 @@ export default function LoginPage() {
         <div className="bg-dots absolute inset-0 opacity-60" />
         <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-brand-500/40 blur-3xl" />
         <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-brand-600/25 blur-3xl" />
-        <div className="relative">
+        <div className="relative flex items-center justify-between gap-3">
           <Logo light />
+          <DemoBadge light align="right" />
         </div>
 
         <div className="relative mt-12 max-w-xl animate-fade-up lg:mt-0">
           <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-brand-200 ring-1 ring-white/15">
-            <Sparkles className="h-3.5 w-3.5" /> Campaña · Pasa la Posta
+            <Sparkles className="h-3.5 w-3.5" /> Campaña · PASA LA POSTA
           </span>
           <h1 className="mt-5 text-balance text-[38px] font-extrabold leading-[1.05] tracking-tight sm:text-[52px]">
             Tu experiencia <span className="text-brand-400">guía</span> a los nuevos.
           </h1>
-          <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/70 sm:text-base">
+          <p className="mt-4 max-w-md text-lg font-bold leading-snug text-white">
+            No aprendas a golpes. Aprende de los que ya pasaron por ahí.
+          </p>
+          <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/65">
             Rappi Crew es la escuela de la calle: Rappitenderos con experiencia acompañan voluntariamente a quienes
             empiezan, y lo que la flota aprende se convierte en Protocolos Crew validados por Rappi.
           </p>
@@ -159,11 +165,26 @@ export default function LoginPage() {
             ))}
           </div>
 
-          <div className="mt-8 flex items-start gap-3 rounded-2xl bg-white/70 p-4 text-xs leading-relaxed text-ink-500 ring-1 ring-ink-100">
+          <Link
+            href="/presentacion"
+            className="group mt-4 flex items-center gap-3 rounded-3xl bg-ink-900 p-4 text-white shadow-lift transition hover:-translate-y-0.5 sm:p-5"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-gradient shadow-glow">
+              <Presentation className="h-6 w-6" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-extrabold">Modo presentación</span>
+              <span className="block text-[13px] text-white/60">Recorrido guiado de 3 minutos para el jurado.</span>
+            </span>
+            <ArrowRight className="h-5 w-5 text-brand-300 transition group-hover:translate-x-1" />
+          </Link>
+
+          <div className="mt-6 flex items-start gap-3 rounded-2xl bg-white/70 p-4 text-xs leading-relaxed text-ink-500 ring-1 ring-ink-100">
             <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-mint-500" />
             <p>
-              Prototipo de alta fidelidad con datos ficticios. Los datos que crees se guardan durante esta sesión del
-              navegador. No es una aplicación oficial ni está conectada a sistemas de Rappi.
+              <b className="text-ink-700">Modo demo.</b> Prototipo con datos ficticios: personas, historias y métricas son de
+              ejemplo. Lo que crees se guarda solo durante esta sesión del navegador. No es una aplicación oficial ni está
+              conectada a sistemas de Rappi.
             </p>
           </div>
         </div>

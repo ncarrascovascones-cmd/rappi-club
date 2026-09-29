@@ -5,53 +5,31 @@ import { useState } from 'react';
 import {
   Award,
   BookOpen,
-  Check,
-  HandHeart,
   Heart,
-  LogOut,
-  Pause,
-  Play,
   Send,
   ShieldCheck,
   Users,
 } from 'lucide-react';
 import { useCrew, useSelectors } from '@/lib/store';
 import { COPILOT_STATUS, SCHEDULE_LABEL, VEHICLE_LABEL } from '@/lib/labels';
-import type { CopilotStatus } from '@/lib/types';
-import { cn, formatNumber, monthsLabel, protocolShort } from '@/lib/utils';
+import { formatNumber, monthsLabel, protocolShort } from '@/lib/utils';
 import { PageHeader } from '@/components/page-header';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Chip } from '@/components/ui/field';
-import { Modal } from '@/components/ui/modal';
+import { ParticipationCard } from '@/components/participation-card';
 import { useToast } from '@/components/ui/toast';
 
 export default function CopilotProfilePage() {
-  const { state, setCopilotStatus, voices } = useCrew();
+  const { state, voices } = useCrew();
   const { selfCopilot: c } = useSelectors();
   const { toast } = useToast();
   const status = state.copilotSelfStatus;
-  const [busy, setBusy] = useState<CopilotStatus | null>(null);
-  const [leaveOpen, setLeaveOpen] = useState(false);
   const [capacity, setCapacity] = useState(3);
   const originated = state.protocols.filter((p) => c.protocolsOriginated.includes(p.id));
   const voice = voices.find((v) => v.name === c.name);
   const thanks = state.experiences.filter((e) => e.author === c.name).reduce((a, e) => a + e.thanks, 0);
-
-  const change = async (next: CopilotStatus) => {
-    setBusy(next);
-    await setCopilotStatus(next);
-    setBusy(null);
-    setLeaveOpen(false);
-    const msg: Record<CopilotStatus, { title: string; description: string }> = {
-      activo: { title: 'Estás participando', description: 'Volverás a recibir invitaciones de nuevos Rappitenderos.' },
-      pausa: { title: 'Participación en pausa', description: 'No recibirás nuevas invitaciones hasta que reactives.' },
-      retirado: { title: 'Dejaste de participar como Copiloto', description: 'Gracias por todo lo que compartiste. Sin penalización.' },
-    };
-    toast({ tone: next === 'retirado' ? 'info' : 'success', ...msg[next] });
-  };
 
   return (
     <div>
@@ -59,7 +37,7 @@ export default function CopilotProfilePage() {
         back={{ href: '/copiloto', label: 'Panel Copiloto' }}
         eyebrow="Perfil del Copiloto"
         title="Tu participación en la Crew"
-        description="Ser Copiloto es voluntario. Tú decides si participas, cuánto y hasta cuándo."
+        description="Ser Copiloto es voluntario. Puedes aceptar, pausar o dejar de participar sin penalización."
       />
 
       <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
@@ -98,93 +76,25 @@ export default function CopilotProfilePage() {
             </div>
           </Card>
 
-          {/* Estado de participación */}
-          <Card className="p-5 sm:p-6">
-            <p className="text-lg font-extrabold text-ink-900">Estado de participación</p>
-            <p className="mt-1 text-sm text-ink-500">Cámbialo cuando quieras. Ninguna opción tiene consecuencias en tu cuenta.</p>
-
-            {status === 'retirado' ? (
-              <div className="mt-4 rounded-2xl bg-ink-50 p-4">
-                <p className="font-bold text-ink-900">Hoy no participas como Copiloto.</p>
-                <p className="mt-1 text-sm text-ink-600">
-                  Tus aportes y protocolos siguen siendo tuyos y siguen ayudando a la Crew. Si algún día quieres volver, aquí estará la puerta.
-                </p>
-                <Button className="mt-4" variant="mint" loading={busy === 'activo'} icon={<Play className="h-4 w-4" />} onClick={() => change('activo')}>
-                  Volver a participar
-                </Button>
-              </div>
-            ) : (
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {(
-                  [
-                    { id: 'activo', icon: Play, title: 'Participando', desc: 'Recibes invitaciones y acompañas a nuevos.' },
-                    { id: 'pausa', icon: Pause, title: 'En pausa', desc: 'Sin nuevas invitaciones. Ideal para semanas pesadas.' },
-                  ] as const
-                ).map((o) => {
-                  const active = status === o.id;
-                  return (
-                    <button
-                      key={o.id}
-                      onClick={() => !active && change(o.id)}
-                      disabled={!!busy}
-                      aria-pressed={active}
-                      className={cn(
-                        'flex items-start gap-3 rounded-2xl p-4 text-left ring-1 transition',
-                        active ? 'bg-mint-50 ring-mint-200' : 'bg-white ring-ink-200 hover:bg-ink-50',
-                      )}
-                    >
-                      <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-xl', active ? 'bg-mint-500 text-white' : 'bg-ink-100 text-ink-500')}>
-                        {busy === o.id ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <o.icon className="h-4 w-4" />}
-                      </span>
-                      <span>
-                        <span className="flex items-center gap-2 font-bold text-ink-900">
-                          {o.title} {active && <Check className="h-4 w-4 text-mint-600" />}
-                        </span>
-                        <span className="text-xs text-ink-500">{o.desc}</span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            {status !== 'retirado' && (
-              <div className="mt-5">
-                <p className="text-sm font-bold text-ink-800">¿A cuántas personas quieres acompañar a la vez?</p>
-                <div className="mt-2 flex gap-2">
-                  {[1, 2, 3, 4].map((n) => (
-                    <Chip
-                      key={n}
-                      active={capacity === n}
-                      onClick={() => {
-                        setCapacity(n);
-                        toast({ tone: 'success', title: 'Preferencia guardada', description: `Máximo ${n} ${n === 1 ? 'persona' : 'personas'} a la vez.` });
-                      }}
-                    >
-                      {n}
-                    </Chip>
-                  ))}
-                </div>
-              </div>
-            )}
-          </Card>
+          <ParticipationCard />
 
           {status !== 'retirado' && (
-            <Card className="border border-brand-100 p-5 sm:p-6">
-              <div className="flex items-start gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
-                  <LogOut className="h-5 w-5" />
-                </span>
-                <div className="flex-1">
-                  <p className="font-extrabold text-ink-900">Dejar de participar como Copiloto</p>
-                  <p className="mt-1 text-sm text-ink-600">
-                    Tu participación es voluntaria. Puedes retirarte en cualquier momento, sin explicar por qué y sin ninguna
-                    penalización en tu cuenta, tus pedidos o tus beneficios.
-                  </p>
-                  <Button variant="danger" size="sm" className="mt-4" onClick={() => setLeaveOpen(true)}>
-                    Dejar de participar como Copiloto
-                  </Button>
-                </div>
+            <Card className="p-5">
+              <p className="text-sm font-bold text-ink-800">¿A cuántas personas quieres acompañar a la vez?</p>
+              <p className="text-xs text-ink-500">Tú pones el límite. Puedes cambiarlo cuando quieras.</p>
+              <div className="mt-3 flex gap-2">
+                {[1, 2, 3, 4].map((n) => (
+                  <Chip
+                    key={n}
+                    active={capacity === n}
+                    onClick={() => {
+                      setCapacity(n);
+                      toast({ tone: 'success', title: 'Preferencia guardada', description: `Máximo ${n} ${n === 1 ? 'persona' : 'personas'} a la vez.` });
+                    }}
+                  >
+                    {n}
+                  </Chip>
+                ))}
               </div>
             </Card>
           )}
@@ -244,45 +154,6 @@ export default function CopilotProfilePage() {
         </div>
       </div>
 
-      <Modal
-        open={leaveOpen}
-        onClose={() => setLeaveOpen(false)}
-        title="¿Dejar de participar como Copiloto?"
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setLeaveOpen(false)}>
-              Seguir participando
-            </Button>
-            <Button variant="dark" loading={busy === 'retirado'} onClick={() => change('retirado')}>
-              Sí, dejar de participar
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-3 pb-2 text-sm text-ink-600">
-          <div className="flex gap-3 rounded-2xl bg-mint-50 p-4 text-mint-700">
-            <HandHeart className="h-5 w-5 shrink-0" />
-            <p>
-              <b>Es tu decisión y la respetamos.</b> Participar como Copiloto siempre fue voluntario.
-            </p>
-          </div>
-          <p>Esto es lo que pasa si te retiras:</p>
-          <ul className="space-y-2">
-            {[
-              'No tendrás ninguna penalización en tu cuenta, pedidos ni beneficios.',
-              'Dejarás de recibir invitaciones de nuevos Rappitenderos.',
-              'Rappi propondrá con cuidado otro Copiloto a quienes acompañas hoy.',
-              'Tus experiencias y protocolos originados siguen siendo parte de la Crew.',
-              'Puedes volver cuando quieras.',
-            ].map((t) => (
-              <li key={t} className="flex gap-2">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-mint-600" /> {t}
-              </li>
-            ))}
-          </ul>
-          <p className="text-xs text-ink-400">¿Solo necesitas un respiro? También puedes poner tu participación en pausa.</p>
-        </div>
-      </Modal>
     </div>
   );
 }
