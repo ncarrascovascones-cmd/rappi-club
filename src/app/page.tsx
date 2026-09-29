@@ -174,7 +174,7 @@ export default function LoginPage() {
             </span>
             <span className="min-w-0 flex-1">
               <span className="block font-extrabold">Modo presentación</span>
-              <span className="block text-[13px] text-white/60">Recorrido guiado de 3 minutos para el jurado.</span>
+              <span className="block text-[13px] text-white/60">Demo guiada de 40 segundos: el corazón de Rappi Crew.</span>
             </span>
             <ArrowRight className="h-5 w-5 text-brand-300 transition group-hover:translate-x-1" />
           </Link>

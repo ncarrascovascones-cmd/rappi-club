@@ -43,35 +43,25 @@ Otros comandos:
 | `npm run lint` | ESLint |
 | `npm run db:seed` | Carga los datos demo en Supabase (ver abajo) |
 
-## Demo para el jurado (Modo presentación)
+## Demo para el jurado (Modo presentación · 40 segundos)
 
-1. `npm run build && npm start` (o `npm run dev`) y abre `http://localhost:3000`.
-2. Pulsa **Modo presentación** en la pantalla de entrada (también está en la barra lateral y en el menú mobile),
-   o entra directo a `/presentacion`.
-3. La portada explica en 1 minuto el problema, qué es Rappi Crew, el flujo central y la validación de Rappi.
-   Pulsa **Iniciar recorrido guiado**: la demo vuelve a sus datos de ejemplo para que el caso salga siempre igual.
-4. Una barra flotante guía 10 pasos. Avanza con **Siguiente** o con las flechas **← →** del teclado. Cada paso
-   muestra el guion (qué decir) y, cuando aplica, un botón de acción:
+1. `npm run build && npm start` (o `npm run dev`) y abre `http://localhost:3000/presentacion`
+   (también: botón **Modo presentación** en la pantalla de entrada, la barra lateral o el menú mobile).
+2. Pulsa **INICIAR DEMO — 40 SEGUNDOS**. La demo prepara el caso *Cliente no responde* con su protocolo aún sin
+   publicar, para mostrar cómo nace.
+3. Avanza con **Siguiente**, **→** o **espacio** (← retrocede, **Esc** sale). También puedes activar **Auto 40 s**,
+   que avanza solo (≈37 s en total).
 
-| # | Paso | Pantalla | Acción |
-| --- | --- | --- | --- |
-| 1 | Nuevo Rappitendero | `/inicio` | — |
-| 2 | Copiloto | `/mi-copiloto` | — |
-| 3 | Problema | Chat con el Copiloto | *Enviar mensaje de Valentina* |
-| 4 | Necesito una mano | Formulario precargado | Pulsa **Enviar** en el formulario |
-| 5 | Administrador | `/admin` (flujo central con números en vivo) | — |
-| 6 | Análisis de experiencias | `/admin/experiencias` | *Agrupar 3 experiencias en un patrón* |
-| 7 | Protocolo Crew | Patrón → editor | *Proponer solución y crear protocolo* |
-| 8 | Validación | Editor | *Enviar a validación y aprobar* |
-| 9 | Publicación | Editor | *Publicar protocolo* |
-| 10 | Visible para el Rappitendero | `/protocolos/…` | — |
+| # | Escena | Vista | Qué pasa | ≈ s |
+| --- | --- | --- | --- | --- |
+| 1 | Mi Copiloto | Nuevo Rappitendero | Valentina y su Copiloto voluntario | 7 |
+| 2 | Me pasa un problema | Nuevo Rappitendero | “Cliente no responde” precargado → **Enviar experiencia** | 6 |
+| 3 | Entra a la Crew | Nuevo Rappitendero | Su caso se suma a experiencias similares | 6 |
+| 4 | Rappi valida | Administrador Rappi | Experiencias → patrón → solución → validación → Protocolo Crew (se anima solo) | 12 |
+| 5 | El siguiente aprende | Nuevo Rappitendero | Protocolo Crew #014 “Cliente no responde” · ✓ Validado por Rappi | 6 |
 
-   Si no pulsas el botón de acción, **Siguiente** lo ejecuta por ti, así que el caso nunca queda a medias.
-5. Al terminar se abre el **cierre**, con los 8 mensajes clave y el enlace para repetir el recorrido o explorar
-   libremente.
-
-Consejos: presenta en una ventana de al menos 1280 px de ancho; el icono de guion en la barra muestra u oculta el
-texto; la **X** sale del modo presentación sin perder lo hecho.
+Después del paso 5 se muestra el cierre. Todo lo demás (beneficios, La Voz, analítica, perfil del Copiloto, match,
+gestión completa del admin) sigue disponible desde **Explorar la plataforma** si el jurado pregunta.
 
 ## Cómo usar la demo libremente
 
@@ -106,7 +96,7 @@ En la pantalla de entrada eliges un perfil, sin contraseña:
 | 11 | Admin Rappi Crew | `/admin`, `/admin/experiencias`, `/admin/patrones`, `/admin/protocolos`, `/admin/protocolos/[id]` |
 | 12 | Analítica (datos DEMO) | `/admin/analitica` |
 | — | Cómo funciona | `/como-funciona` |
-| — | Modo presentación (portada y cierre) | `/presentacion`, `/presentacion/cierre` |
+| — | Modo presentación (portada, demo de 40 s y cierre) | `/presentacion`, `/presentacion/demo`, `/presentacion/cierre` |
 
 ## Variables de entorno
 

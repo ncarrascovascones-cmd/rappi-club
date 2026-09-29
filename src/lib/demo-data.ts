@@ -1269,3 +1269,11 @@ export const PRESENTATION_PROTOCOL_PRESET = {
   origin:
     'Construido a partir de experiencias reales de Rappitenderos del Centro y del Salitre, revisado y validado por el equipo de Operaciones de Rappi.',
 };
+
+/** Caso de la demo de 40 s del Modo presentación. */
+export const DEMO_CASE = {
+  category: 'cliente_no_responde' as const,
+  protocolId: 'p-014',
+  clusterId: 'cl-1',
+  text: 'Llegué al edificio, llamé dos veces y el cliente no contesta. En portería no me dejan subir.',
+};

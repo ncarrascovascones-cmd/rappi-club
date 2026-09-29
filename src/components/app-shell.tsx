@@ -34,7 +34,6 @@ import { Avatar } from './ui/avatar';
 import { Modal } from './ui/modal';
 import { PageSkeleton } from './ui/states';
 import { DemoBadge } from './demo-badge';
-import { PresentationBar } from './presentation-bar';
 
 interface NavItem {
   href: string;
@@ -115,7 +114,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
   const role = state.role;
-  const presenting = state.presentation.active;
 
   useEffect(() => {
     if (hydrated && !role) router.replace('/');
@@ -207,7 +205,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Presentation className="h-4 w-4" />
             </span>
             <span className="whitespace-nowrap">Modo presentación</span>
-            {presenting && <span className="ml-auto whitespace-nowrap rounded-full bg-brand-500 px-1.5 text-[10px]">EN CURSO</span>}
           </Link>
           <div className="flex items-center gap-3 rounded-2xl bg-ink-50 p-3">
             <Avatar initials={user.initials} color={user.color} size="sm" />
@@ -257,17 +254,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       <main className="lg:pl-[272px]">
-        <div
-          className={cn(
-            'mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 lg:px-10 lg:pt-10',
-            presenting ? 'pb-64 lg:pb-48' : 'pb-32 lg:pb-16',
-          )}
-        >
+        <div className="mx-auto w-full max-w-6xl px-4 pb-32 pt-6 sm:px-6 lg:px-10 lg:pb-16 lg:pt-10">
           {!hydrated || !role ? <PageSkeleton /> : children}
         </div>
       </main>
-
-      {hydrated && presenting && <PresentationBar />}
 
       {/* Bottom nav mobile */}
       {nav && (

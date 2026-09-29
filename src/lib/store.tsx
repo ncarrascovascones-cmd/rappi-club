@@ -25,6 +25,7 @@ import {
   DEMO_RIDER,
   PRESENTATION_CLUSTER_ID,
   PRESENTATION_PROTOCOL_PRESET,
+  DEMO_CASE,
   TIMELINE,
   VOICES,
 } from './demo-data';
@@ -133,7 +134,7 @@ interface CrewContextValue {
   completeStep: (id: string) => void;
   sendMessage: (threadId: string, from: 'nuevo' | 'copiloto', text: string, replyText?: string) => void;
   requestCopilot: (copilotId: string) => Promise<void>;
-  submitHelp: (input: { category: HelpCategory; text: string }) => Promise<HelpRequest>;
+  submitHelp: (input: { category: HelpCategory; text: string }, opts?: { instant?: boolean }) => Promise<HelpRequest>;
   rateHelp: (id: string, helpful: boolean) => void;
   shareExperience: (input: { category: HelpCategory; text: string; zone: string }) => Promise<Experience>;
   toggleThanks: (id: string) => void;
@@ -152,7 +153,7 @@ interface CrewContextValue {
   setClusterStatus: (id: string, status: ClusterStatus) => void;
   createProtocol: (clusterId?: string, preset?: Partial<Protocol>) => string;
   saveProtocol: (protocol: Protocol) => Promise<void>;
-  setProtocolStatus: (id: string, status: ProtocolStatus) => Promise<void>;
+  setProtocolStatus: (id: string, status: ProtocolStatus, opts?: { instant?: boolean }) => Promise<void>;
   deleteProtocol: (id: string) => void;
   setHelpStatus: (id: string, status: HelpStatus) => void;
   // Modo presentación
@@ -331,8 +332,8 @@ export function CrewProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const submitHelp = useCallback(
-    async ({ category, text }: { category: HelpCategory; text: string }) => {
-      await delay(2800);
+    async ({ category, text }: { category: HelpCategory; text: string }, opts?: { instant?: boolean }) => {
+      if (!opts?.instant) await delay(2800);
       const s = stateRef.current;
       const protocol = s.protocols.find((p) => p.category === category && p.status === 'publicado');
       const cluster =
@@ -642,8 +643,8 @@ export function CrewProvider({ children }: { children: ReactNode }) {
   );
 
   const setProtocolStatus = useCallback(
-    async (id: string, status: ProtocolStatus) => {
-      await delay(900);
+    async (id: string, status: ProtocolStatus, opts?: { instant?: boolean }) => {
+      if (!opts?.instant) await delay(900);
       const clusterStatus: Record<ProtocolStatus, ClusterStatus> = {
         borrador: 'protocolo_en_borrador',
         en_validacion: 'en_validacion',
@@ -699,11 +700,25 @@ export function CrewProvider({ children }: { children: ReactNode }) {
     [persist],
   );
 
+  /**
+   * Prepara la demo de 40 s: el caso "Cliente no responde" empieza con su protocolo aún sin publicar,
+   * para mostrar cómo nace (experiencias → patrón → solución → validación → Protocolo Crew).
+   */
   const startPresentation = useCallback(() => {
+    const base = initialState();
     setState(() => ({
-      ...initialState(),
+      ...base,
       role: 'nuevo',
-      presentation: { active: true, step: 0, protocolId: null },
+      protocols: base.protocols.map((p) =>
+        p.id === DEMO_CASE.protocolId ? { ...p, status: 'borrador', views: 0, helpful: 0 } : p,
+      ),
+      clusters: base.clusters.map((c) =>
+        c.id === DEMO_CASE.clusterId ? { ...c, status: 'protocolo_en_borrador' } : c,
+      ),
+      experiences: base.experiences.map((e) =>
+        e.clusterId === DEMO_CASE.clusterId ? { ...e, status: 'agrupada' } : e,
+      ),
+      presentation: { active: true, step: 0, protocolId: DEMO_CASE.protocolId },
     }));
   }, []);
 
