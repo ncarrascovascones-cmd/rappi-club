@@ -26,7 +26,7 @@ incentivos económicos, y nunca obliga a nadie a ser Copiloto.
 
 ## Instalación y ejecución local
 
-Requisitos: Node.js 18.18 o superior (recomendado 20+) y npm.
+Requisitos: Node.js 24 (ver `.nvmrc`) y npm.
 
 ```bash
 npm install
