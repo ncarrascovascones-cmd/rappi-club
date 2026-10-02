@@ -24,7 +24,7 @@ const ROLES: {
   {
     id: 'nuevo',
     title: 'Nuevo Rappitendero',
-    who: 'Valentina · 9 días en la calle',
+    who: 'Julio · 9 días en la calle',
     description: 'Empieza acompañado: tu Copiloto, Protocolos Crew y una mano cuando la necesites.',
     home: '/inicio',
     icon: Bike,
@@ -81,7 +81,7 @@ export default function LoginPage() {
             <Sparkles className="h-3.5 w-3.5" /> Campaña · PASA LA POSTA
           </span>
           <h1 className="mt-5 text-balance text-[38px] font-extrabold leading-[1.05] tracking-tight sm:text-[52px]">
-            Tu experiencia <span className="text-brand-400">guía</span> a los nuevos.
+            Compartimos experiencia. <span className="text-brand-400">Aprendemos todos.</span>
           </h1>
           <p className="mt-4 max-w-md text-lg font-bold leading-snug text-white">
             No aprendas a golpes. Aprende de los que ya pasaron por ahí.
