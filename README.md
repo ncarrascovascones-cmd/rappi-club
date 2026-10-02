@@ -1,6 +1,6 @@
 # RAPPI CREW · “La escuela de la calle”
 
-> **Tu experiencia guía a los nuevos.** · Campaña: **PASA LA POSTA**
+> **Compartimos experiencia. Aprendemos todos.** · Campaña: **PASA LA POSTA**
 >
 > *No aprendas a golpes. Aprende de los que ya pasaron por ahí.*
 
@@ -54,7 +54,7 @@ Otros comandos:
 
 | # | Escena | Vista | Qué pasa | ≈ s |
 | --- | --- | --- | --- | --- |
-| 1 | Mi Copiloto | Nuevo Rappitendero | Valentina y su Copiloto voluntario | 7 |
+| 1 | Mi Copiloto | Nuevo Rappitendero | Julio y su Copiloto voluntario | 7 |
 | 2 | Me pasa un problema | Nuevo Rappitendero | “Cliente no responde” precargado → **Enviar experiencia** | 6 |
 | 3 | Entra a la Crew | Nuevo Rappitendero | Su caso se suma a experiencias similares | 6 |
 | 4 | Rappi valida | Administrador Rappi | Experiencias → patrón → solución → validación → Protocolo Crew (se anima solo) | 12 |
@@ -69,7 +69,7 @@ En la pantalla de entrada eliges un perfil, sin contraseña:
 
 | Perfil | Persona demo | Entra a |
 | --- | --- | --- |
-| Nuevo Rappitendero | Valentina · 9 días | `/inicio` |
+| Nuevo Rappitendero | Julio · 9 días | `/inicio` |
 | Copiloto | Andrés · 3 años en Chapinero | `/copiloto` |
 | Administrador Rappi | Laura · Operaciones | `/admin` |
 
