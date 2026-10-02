@@ -38,7 +38,7 @@ export default function PresentacionPage() {
         <p className="mt-2 text-lg font-semibold text-white/60">La escuela de la calle</p>
 
         <h1 className="mt-10 text-balance text-[32px] font-extrabold leading-tight tracking-tight sm:text-[48px]">
-          “Tu experiencia guía a los nuevos.”
+          “Compartimos experiencia. Aprendemos todos.”
         </h1>
         <p className="mt-3 text-balance text-lg font-semibold text-white/80 sm:text-xl">
           No aprendas a golpes. Aprende de los que ya pasaron por ahí.
