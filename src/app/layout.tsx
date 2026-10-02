@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: '%s · Rappi Crew',
   },
   description:
-    'Prototipo de fidelización de Rappitenderos: Copilotos voluntarios que acompañan a los nuevos y Protocolos Crew validados por Rappi. Tu experiencia guía a los nuevos.',
+    'Prototipo de fidelización de Rappitenderos: Copilotos voluntarios que acompañan a los nuevos y Protocolos Crew validados por Rappi. Compartimos experiencia. Aprendemos todos.',
   icons: { icon: '/icon.svg' },
 };
 
