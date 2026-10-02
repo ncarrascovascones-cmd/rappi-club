@@ -11,7 +11,7 @@ export default function ComoFuncionaPage() {
       <PageHeader
         eyebrow="Cómo funciona"
         title="Rappi Crew, la escuela de la calle"
-        description="Tu experiencia guía a los nuevos. No aprendas a golpes: aprende de los que ya pasaron por ahí."
+        description="Compartimos experiencia. Aprendemos todos. No aprendas a golpes: aprende de los que ya pasaron por ahí."
         actions={
           <ButtonLink href="/presentacion" variant="dark" size="sm" icon={<Play className="h-4 w-4" />}>
             Modo presentación
