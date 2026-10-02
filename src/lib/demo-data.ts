@@ -18,9 +18,9 @@ import type {
 
 export const DEMO_RIDER: RiderProfile = {
   id: 'r-valentina',
-  name: 'Valentina Ruiz',
-  firstName: 'Valentina',
-  initials: 'VR',
+  name: 'Julio',
+  firstName: 'Julio',
+  initials: 'J',
   color: '#FF5B35',
   vehicle: 'moto',
   zone: 'Chapinero',
@@ -187,7 +187,7 @@ export const INITIAL_THREADS: Record<string, ChatMessage[]> = {
     {
       id: 'm2',
       from: 'copiloto',
-      text: '¡Hola Valentina! Soy Andrés, llevo 3 años moviéndome por Chapinero. Cualquier duda de la calle, me escribes 🙌',
+      text: '¡Hola Julio! Soy Andrés, llevo 3 años moviéndome por Chapinero. Cualquier duda de la calle, me escribes 🙌',
       at: '2026-09-21T15:10:00',
     },
     {
@@ -949,8 +949,8 @@ export const INVITATIONS: Invitation[] = [
 export const MENTEES: Mentee[] = [
   {
     id: 'me-1',
-    name: 'Valentina Ruiz',
-    initials: 'VR',
+    name: 'Julio',
+    initials: 'J',
     color: '#FF5B35',
     zone: 'Chapinero',
     vehicle: 'moto',
