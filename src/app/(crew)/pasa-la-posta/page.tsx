@@ -71,7 +71,7 @@ export default function PasaLaPostaPage() {
     <div>
       <PageHeader
         eyebrow="Campaña · Pasa la Posta"
-        title="Tu experiencia guía a los nuevos"
+        title="Compartimos experiencia. Aprendemos todos."
         description="Lo que aprendiste en la calle puede ahorrarle un mal día a quien empieza. Rappi lee cada posta y las mejores se convierten en Protocolos Crew."
       />
 
